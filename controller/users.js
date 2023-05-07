@@ -14,7 +14,7 @@ module.exports.create = async (req, res) => {
     try {
         const hashedPassword = await bcryptjs.hash(password, 10);
         let response = await User.create({ name, gender, dob, email, password: hashedPassword, phone });
-        const token = jwt.sign({ userId: response._id }, secretKey, { expiresIn: '1d' });
+        const token = jwt.sign({ userId: response._id }, secretKey, { expiresIn: '2d' });
         res.status(200).json({ status: true, token: token, name: response.name });
     }
     catch (e) {
@@ -29,6 +29,7 @@ module.exports.login = async (req, res) => {
     let user = await User.findOne({ email });
     if (!user)
         return res.json({ status: false, msg: 'Incorrect email' });
+    const hashedPassword = await bcryptjs.hash(password, 10);
     const decryptedPassword = await bcryptjs.compare(password, user.password);
     if (!decryptedPassword)
         return res.json({
@@ -36,7 +37,7 @@ module.exports.login = async (req, res) => {
             msg: 'Invalid password'
         });
     const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: '1d' });
-    res.status(200).json({ status: true, token: token, name: user.name });
+    res.status(200).json({ status: true, token: token });
 
 };
 

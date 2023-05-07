@@ -34,7 +34,7 @@ const User = require('./routes/userRoute');
 const Label = require('./routes/labelRoute');
 // const ExpenseList = require('./routes/expenseListRoute');
 // const Expense = requrie('./routes/expenseRoute.js');
-// const DailyExpense = require('./routes/dailyExpenseRoute');
+const DailyExpense = require('./routes/dailyExpenseRoute');
 // const CollaborateExpense = require('./routes/collaborateExpenseRoute');
 
 /// API endpoint for routes
@@ -42,12 +42,12 @@ app.use('/api/user', User);
 app.use('/api/label', Label);
 // app.use('/api/expense-list', ExpenseList);
 // app.use('/api/expense', Expense);
-// app.use('/api/daily-expense', DailyExpense);
+app.use('/api/daily-expense', DailyExpense);
 // app.use('/api/collaborate-expense', CollaborateExpense);
 
 app.get('/', (req, res) => {
     res.send('server running');
 });
 app.listen(port, () => {
-    console.log('start');
+    console.log(`link: http://localhost:${port}`);
 });

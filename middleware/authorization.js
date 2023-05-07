@@ -12,7 +12,7 @@ module.exports.isAuth = (req, res, next) => {
         else
             userId = decoded.userId;
     });
-    req.id = userId;
+    req.uid = userId;
     next();
 
 };

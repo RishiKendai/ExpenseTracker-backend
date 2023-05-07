@@ -1,0 +1,3 @@
+# ignore these files at root lvl
+node_modules
+.env

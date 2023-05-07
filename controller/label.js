@@ -4,8 +4,9 @@ const mongoose = require('mongoose');
 
 /// (POST) Create label
 module.exports.create = async (req, res) => {
-    const id = req.id;
-    const { name, color } = req.body;
+    const uid = req.uid;
+    let { name, color } = req.body;
+    name = name.trim();
     /*
     name: "Rent",
     color: {
@@ -15,12 +16,11 @@ module.exports.create = async (req, res) => {
     }
     */
     try {
-
-        const label = await Label.create({ name, color, access: new mongoose.Types.ObjectId(id) });
-        res.status(200).json({ status: true, msg: `label ${label.name} created` });
+        const label = await Label.create({ name, color, access: new mongoose.Types.ObjectId(uid) });
+        res.status(200).json({ status: 'success', msg: `label ${label.name} created` });
     } catch (err) {
         console.log('error: ', err);
-        return res.json({ status: false, msg: "Couldn't create label" });
+        return res.json({ status: 'failed', msg: "Couldn't create label" });
     }
 
 };
@@ -40,10 +40,9 @@ module.exports.edit = async (req, res) => {
 
 /// (GET) Get all label names
 module.exports.getAllLabels = async (req, res) => {
-    const id = req.id;
-    console.log(id);
+    const uid = req.uid;
     const data = await Label.find({
-        access: { $in: ["ANY", new mongoose.Types.ObjectId(id)] },
+        access: { $in: ["ANY", new mongoose.Types.ObjectId(uid)] },
     });
     return res.status(200).json({ labels: data });
 };

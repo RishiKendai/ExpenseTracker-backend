@@ -41,8 +41,21 @@ module.exports.edit = async (req, res) => {
 /// (GET) Get all label names
 module.exports.getAllLabels = async (req, res) => {
     const uid = req.uid;
-    const data = await Label.find({
-        access: { $in: ["ANY", new mongoose.Types.ObjectId(uid)] },
-    });
-    return res.status(200).json({ labels: data });
+    try {
+        const data = await Label.find({
+            access: { $in: ["ANY", new mongoose.Types.ObjectId(uid)] },
+        });
+        data.sort((a, b) => {
+            if (a.access === 'ANY')
+                return -1;
+            if (b.access === 'ANY')
+                return 1;
+            else
+                return 0;
+        });
+        return res.status(200).json({ labels: data });
+    }
+    catch (e) {
+        console.log(e);
+    }
 };

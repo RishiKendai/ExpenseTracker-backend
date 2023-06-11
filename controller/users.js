@@ -9,9 +9,9 @@ const secretKey = process.env.SECRET_KEY;
 module.exports.create = async (req, res) => {
     let { name, gender, dob, email, password, phone } = req.body;
 
-    const hasUser = await User.findOne({ email });
-    if (hasUser) return res.json({ status: false, msg: 'email already exist!' });
     try {
+        const hasUser = await User.findOne({ email });
+        if (hasUser) return res.json({ status: false, msg: 'email already exist!' });
         const hashedPassword = await bcryptjs.hash(password, 10);
         let response = await User.create({ name, gender, dob, email, password: hashedPassword, phone });
         const token = jwt.sign({ userId: response._id }, secretKey, { expiresIn: '2d' });
@@ -26,19 +26,24 @@ module.exports.create = async (req, res) => {
 /// (POST) Login user 
 module.exports.login = async (req, res) => {
     const { email, password } = req.body;
-    let user = await User.findOne({ email });
-    if (!user)
-        return res.json({ status: false, msg: 'Incorrect email' });
-    const hashedPassword = await bcryptjs.hash(password, 10);
-    const decryptedPassword = await bcryptjs.compare(password, user.password);
-    if (!decryptedPassword)
-        return res.json({
-            status: false,
-            msg: 'Invalid password'
-        });
-    const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: '1d' });
-    res.status(200).json({ status: true, token: token });
+    try {
+        let user = await User.findOne({ email });
+        if (!user)
+            return res.json({ status: false, msg: 'Incorrect email' });
+        const hashedPassword = await bcryptjs.hash(password, 10);
+        const decryptedPassword = await bcryptjs.compare(password, user.password);
+        if (!decryptedPassword)
+            return res.json({
+                status: false,
+                msg: 'Invalid password'
+            });
+        const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: '365d' });
+        res.status(200).json({ status: true, token: token });
 
+    }
+    catch (e) {
+        console.log(e);
+    }
 };
 
 

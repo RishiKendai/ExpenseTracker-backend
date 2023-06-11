@@ -4,12 +4,11 @@ const toUID = require("../utils/toUID.js");
 
 module.exports.getExpenseByDate = async (req, res) => {
     let { uid, currdate } = req.body;
-    uid = await toUID(uid);
-    currdate = new Date(currdate);
-    const startDate = new Date(currdate.getFullYear(), currdate.getMonth(), currdate.getDate(), 0, 0, 0);
-    const endDate = new Date(currdate.getFullYear(), currdate.getMonth(), currdate.getDate(), 23, 59, 59);
-
     try {
+        uid = await toUID(uid);
+        currdate = new Date(currdate);
+        const startDate = new Date(currdate.getFullYear(), currdate.getMonth(), currdate.getDate(), 0, 0, 0);
+        const endDate = new Date(currdate.getFullYear(), currdate.getMonth(), currdate.getDate(), 23, 59, 59);
         const response = await DailyXpnse.find({
             uid: uid,
             paidAt: {
@@ -20,14 +19,14 @@ module.exports.getExpenseByDate = async (req, res) => {
         if (response)
             return res.send({ status: 'success', data: response });
     } catch (err) {
-        return res.send({ status: 'failed', msg: `Failed: ${err}` });
+        return res.status(401).send({ status: 'expired' });
     }
 };
 
 module.exports.create = async (req, res) => {
     let { uid, paidTo, amount, note, label, proof } = req.body;
-    uid = await toUID(uid);
     try {
+        uid = await toUID(uid);
         const addXpense = await DailyXpnse.create({
             uid: uid,
             payeeName: paidTo,
